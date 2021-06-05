@@ -12,3 +12,32 @@
   }                                                                                           \
   
   
+string GetTickFlag( uint tickflag )
+{
+   string flag = "";
+#define TICKFLAG_MACRO(A) flag += ((bool)(tickflag & TICK_FLAG_##A)) ? " TICK_FLAG_" + #A : "";
+   TICKFLAG_MACRO(BID)
+   TICKFLAG_MACRO(ASK)
+   TICKFLAG_MACRO(LAST)
+   TICKFLAG_MACRO(VOLUME)
+   TICKFLAG_MACRO(BUY)
+   TICKFLAG_MACRO(SELL)
+#undef TICKFLAG_MACRO
+   if (flag == "")
+      flag = " FLAG_UNKNOWN (" + (string)tickflag + ")";
+   return(flag);
+}
+#define TOSTRING(A) " " + #A + " = " + (string)Tick.A
+string TickToString( const MqlTick &Tick )
+{
+   return(TOSTRING(time) + "." + (string)IntegerToString(Tick.time_msc % 1000, 3, '0') +
+          TOSTRING(bid) + TOSTRING(ask) + TOSTRING(last) + TOSTRING(volume) + GetTickFlag(Tick.flags));
+}
+/* // Example
+   MqlTick Tick;
+   if (SymbolInfoTick(_Symbol, Tick))
+      Print(TickToString(Tick));
+*/
+
+
+
